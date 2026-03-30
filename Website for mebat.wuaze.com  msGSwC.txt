@@ -1,0 +1,6 @@
+Website for mebat.wuaze.com : msGSwCp6lsCd9s
+
+MySQL DB Name			MySQL User Name		MySQL Password			MySQL Host Name	
+if0_41156230_db_bandara		if0_41156230		(Your vPanel Password)		sql203.infinityfree.com
+
+if0_41156230_db_kampus	if0_41156230	(Your vPanel Password)	sql203.infinityfree.com

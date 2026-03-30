@@ -11,9 +11,35 @@ class Mahasiswa extends ResourceController
 
     public function index()
     {
-        $data = $this->model->findAll();
+        $keyword = $this->request->getVar('keyword');
+        $page = $this->request->getGet('page') ?? 1;
+        $perPage = 5;
 
-        return successResponse($data, 'Data Mahasiswa Berhasil Diambil');
+        $this->model
+             ->select('mahasiswa.*, jurusan.nama_jurusan')
+             ->join('jurusan', 'jurusan.id = mahasiswa.jurusan_id');
+
+        if ($keyword){
+            $this->model
+                 ->groupStart()
+                 ->like('nama', $keyword)
+                 ->orLike('nim', $keyword)
+                 ->orLike('jurusan.nama_jurusan', $keyword)
+                 ->groupEnd();
+        }
+        $data = $this->model->paginate($perPage, 'default', $page);
+
+        $pager = $this->model->pager;
+
+        return successResponse([
+            'mahasiswa' => $data,
+            'pagination' => [
+                'curren_page' => $pager->getCurrentPage(),
+                'total_page' => $pager->getPageCount(),
+                'per_page' => $perPage,
+                'total_data' => $pager->getTotal()
+            ]
+        ], 'Data Mahasiswa Berhasil Diambil');
     }
 
     public function show($id = null)

@@ -104,45 +104,59 @@ class Mahasiswa extends ResourceController
             return successResponse(null, 'Data berhasil ditambahkan', 201);
     }
 
-public function update($id = null)
-{
-    $dataLama = $this->model->find($id);
+    public function update($id = null)
+    {
+        $dataLama = $this->model->find($id);
 
-    if (!$dataLama) {
-        return $this->failNotFound('Data tidak ditemukan');
-    }
-
-    $file = $this->request->getFile('foto');
-    $path = FCPATH . 'img/';
-
-    if ($file && $file->isValid() && $file->getError() == 0) {
-
-        if(!$this->validate([
-            'foto' => 'is_image[foto]|max_size[foto,2048]'
-        ])) {
-            return $this->fail($this->validator->getErrors());
+        if (!$dataLama) {
+            return $this->failNotFound('Data tidak ditemukan');
         }
 
-        if ($dataLama['foto'] != 'default.png' && file_exists($path . $dataLama['foto'])) {
-            unlink($path . $dataLama['foto']);
+        $input = $this->request->getPost();
+        if (empty($input)) {
+            $input = $this->request->getRawInput();
         }
 
-        $namaFoto = $file->getRandomName();
-        $file->move($path, $namaFoto);
+        $nama = $input['nama'] ?? $dataLama['nama'];
+        $nim = $input['nim'] ?? $dataLama['nim'];
+        $jurusan_id = $input['jurusan_id'] ?? $dataLama['jurusan_id'];
 
-    } else {
-        $namaFoto = $dataLama['foto'];
+        $file = $this->request->getFile('foto');
+        $path = FCPATH . 'img/';
+
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+
+            // validasi tetap dipertahankan
+            if (!$this->validate([
+                'foto' => 'is_image[foto]|max_size[foto,2048]'
+            ])) {
+                return $this->fail($this->validator->getErrors());
+            }
+
+            if (
+                $dataLama['foto'] != 'default.png' &&
+                file_exists($path . $dataLama['foto'])
+            ) {
+                unlink($path . $dataLama['foto']);
+            }
+
+            $namaFoto = $file->getRandomName();
+            $file->move($path, $namaFoto);
+
+        } else {
+            // kalau tidak upload foto baru
+            $namaFoto = $dataLama['foto'];
+        }
+
+        $this->model->update($id, [
+            'nama' => $nama,
+            'nim' => $nim,
+            'jurusan_id' => $jurusan_id,
+            'foto' => $namaFoto
+        ]);
+
+        return successResponse(null, 'Data berhasil diupdate');
     }
-
-    $this->model->update($id, [
-        'nama' => $this->request->getPost('nama'),
-        'nim' => $this->request->getPost('nim'),
-        'jurusan_id' => $this->request->getPost('jurusan_id'),
-        'foto' => $namaFoto
-    ]);
-
-    return successResponse(null, 'Data berhasil diupdate');
-}
 
     public function delete($id = null)
     {

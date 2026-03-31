@@ -37,6 +37,7 @@ class Filters extends BaseFilters
         'auth'          => \App\Filters\AuthFilter::class,
         'role'          => \App\Filters\RoleFilter::class,
         'jwt'           => \App\Filters\JWTFilter::class,
+        'apiLog'        => \App\Filters\ApiLogFilter::class,
     ];
 
     /**
@@ -80,6 +81,7 @@ class Filters extends BaseFilters
             // 'invalidchars',
         ],
         'after' => [
+            'apiLog',
             // 'honeypot',
             // 'secureheaders',
         ],

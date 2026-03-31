@@ -25,7 +25,7 @@ class Auth extends ResourceController
 
     $payload = [
       'iat'   => time(),
-      'exp'   => time() + 3600,
+      'exp'   => time() + 7200,
       'username'  => $user['username'],
       'role'      => $user['role']
     ];

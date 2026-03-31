@@ -19,7 +19,15 @@ class JWTFilter implements FilterInterface
         'message'   => 'Token tidak Ditemukan'
       ])->setStatusCode(401);
     }
-    $token = explode(' ' , $header)[1];
+    $parts = explode(' ', $header);
+
+    if (count($parts) !== 2) {
+        return service('response')->setJSON([
+            'message' => 'Format token salah'
+        ])->setStatusCode(401);
+    }
+
+    $token = $parts[1];
 
     try{
       $key    = getenv('JWT_SECRET');

@@ -37,11 +37,12 @@ $routes->get('/log', 'Log::index', ['filter' => 'auth']);
 $routes->get('/log', 'Mahasiswa::log', ['filter' => 'role:admin']);
 
 $routes->group('api', ['filter' => 'jwt'], function($routes) {
-  $routes->get('mahasiswa', 'Api\Mahasiswa::index', ['filter' => 'jwt']);
-  $routes->get('mahasiswa/(:num)', 'Api\Mahasiswa::show/$1', ['filter' => 'jwt']);
-});
 
-$routes->group('api', ['filter' => 'jwt:admin'], function($routes) {
+  // user biasa
+  $routes->get('mahasiswa', 'Api\Mahasiswa::index');
+  $routes->get('mahasiswa/(:num)', 'Api\Mahasiswa::show/$1');
+
+  // admin
   $routes->post('mahasiswa', 'Api\Mahasiswa::create', ['filter' => 'jwt:admin']);
   $routes->put('mahasiswa/(:num)', 'Api\Mahasiswa::update/$1', ['filter' => 'jwt:admin']);
   $routes->delete('mahasiswa/(:num)', 'Api\Mahasiswa::delete/$1', ['filter' => 'jwt:admin']);

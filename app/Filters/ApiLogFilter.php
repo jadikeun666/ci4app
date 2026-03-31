@@ -12,38 +12,43 @@ class ApiLogFilter implements FilterInterface
     
     public function before(RequestInterface $request, $arguments = null)
     {
-        // tidak perlu apa-apa di before
+        $_SERVER['REQUEST_START_TIME'] = microtime(true);
     }
 
-public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
-{
-    $logModel = new \App\Models\ApiLogModel();
+    public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
+    {
+        $logModel = new \App\Models\ApiLogModel();
 
-    $req = service('request');
-    $res = service('response');
+        // hitung durasi
+        $start = $_SERVER['REQUEST_START_TIME'] ?? microtime(true);
+        $duration = (microtime(true) - $start) * 1000;
 
-    $user = 'guest';
-    if (property_exists($request, 'user') && isset($request->user->username)) {
-        $user = $request->user->username;
-    }
+        $req = service('request');
+        $res = service('response');
 
-    $ip = $req->getIPAddress() ?: 'unknown';
-    $status = $res->getStatusCode() ?? 200;
+        $user = 'guest';
+        if (property_exists($request, 'user') && isset($request->user->username)) {
+            $user = $request->user->username;
+        }
 
-    if (!$ip) {
-        $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
-    }
-    if (!$status) {
-        $status = 200;
-    }
+        $ip = $req->getIPAddress() ?: 'unknown';
+        $status = $res->getStatusCode() ?? 200;
 
-    $logModel->insert([
-        'method'      => strtoupper($req->getMethod()),
-        'endpoint'    => $req->getUri()->getPath(),
-        'ip_address'  => $ip,
-        'user'        => $user,
-        'status_code' => $status
-    ]);
+        if (!$ip) {
+            $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+        }
+        if (!$status) {
+            $status = 200;
+        }
+
+        $logModel->insert([
+            'method'      => strtoupper($req->getMethod()),
+            'endpoint'    => $req->getUri()->getPath(),
+            'ip_address'  => $ip,
+            'user'        => $user,
+            'status_code' => $status,
+            'response_time' => round($duration, 3)
+        ]);
 
     }
 }

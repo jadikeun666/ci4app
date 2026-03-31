@@ -14,6 +14,7 @@ class ApiLogModel extends Model
             'endpoint',
             'ip_address',
             'user',
-            'status_code'
+            'status_code',
+            'response_time'
     ];
 }

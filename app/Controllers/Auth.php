@@ -2,6 +2,7 @@
 namespace App\Controllers;
 
 use App\Models\UserModel;
+use App\Models\AuditLogModel;
 
 class Auth extends BaseController
 {
@@ -79,7 +80,7 @@ public function processLogin()
 
   public function logout()
   {
-    $log = new App\Models\AuditLogModel();
+    $log = new AuditLogModel();
 
     $log->insert([
       'user'        => session()->get('username'),

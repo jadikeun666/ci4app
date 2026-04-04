@@ -12,7 +12,7 @@ class MahasiswaModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['nama','nim','jurusan_id', 'foto'];
+    protected $allowedFields    = ['nama','nim','jurusan_id', 'foto', 'user_id'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;

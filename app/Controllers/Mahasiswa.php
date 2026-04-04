@@ -57,7 +57,8 @@ class Mahasiswa extends BaseController
             'nama' => $this->request->getPost('nama'),
             'nim' => $this->request->getPost('nim'),
             'jurusan_id' => $this->request->getPost('jurusan_id'),
-            'foto' => $namaFoto
+            'foto' => $namaFoto,
+            'user_id' => session()->get('user_id')
         ];
 
         $model->insert($data);
@@ -77,6 +78,11 @@ class Mahasiswa extends BaseController
 
     public function edit($id)
     {
+        if (session()->get('role') != 'admin') {
+            return redirect()->to('/profile');
+            }
+
+
         $model = new MahasiswaModel();
 
         $db = \Config\Database::connect();
@@ -90,6 +96,12 @@ class Mahasiswa extends BaseController
 
     public function update($id)
     {
+        if (session()->get('role') != 'admin') {
+            return redirect()->to('/profile');
+            }
+
+
+
         if (!$this->validate([
             'nama' => 'required|min_length[3]',
             'nim' => 'required',
@@ -138,6 +150,11 @@ class Mahasiswa extends BaseController
 
     public function delete($id)
     {
+        if (session()->get('role') != 'admin') {
+            return redirect()->to('/profile');
+            }
+
+
         $model = new MahasiswaModel();
 
         $data = $model->find($id);

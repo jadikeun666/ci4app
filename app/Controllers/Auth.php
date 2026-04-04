@@ -34,14 +34,20 @@ public function processLogin()
 
         session()->set('login', true);
         session()->set('username', $user['username']);
+        session()->set('user_id', $user['id']);
         session()->set('role', $user['role']);
 
-        return redirect()->to('/mahasiswa');
+        
+        if ($user['role'] == 'admin'){
+          return redirect()->to('/mahasiswa');
+        } else{
+          return redirect()->to('/profile');
+        }
     }
 
-    // ❌ LOGIN GAGAL
+    //  LOGIN GAGAL
     session()->setFlashdata('error', 'Username atau Password salah');
-    return redirect()->to('/login');
+    
 
     $log = new \App\Models\AuditLogModel();
     $log->insert([
@@ -49,6 +55,8 @@ public function processLogin()
       'action'        => 'LOGIN',
       'description'   => 'User login'
     ]);
+
+    return redirect()->to('/login');
 }
 
   public function register()
@@ -71,9 +79,6 @@ public function processLogin()
 
   public function logout()
   {
-    session()->destroy();
-    return redirect()->to('/login');
-
     $log = new App\Models\AuditLogModel();
 
     $log->insert([
@@ -81,6 +86,9 @@ public function processLogin()
       'action'      => 'LOGOUT',
       'description' => 'User Logout'
     ]);
+    
+    session()->destroy();
+    return redirect()->to('/login');
   }
 }
 

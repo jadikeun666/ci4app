@@ -50,3 +50,6 @@ $routes->group('api', ['filter' => 'jwt'], function($routes) {
 
 
 $routes->post('api/login', 'Api\Auth::login');
+
+$routes->get('/profile', 'Profile::index', ['filter' => 'auth']);
+$routes->get('/mahasiswa', 'Mahasiswa::index', ['filter' => 'role:admin']);

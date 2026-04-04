@@ -1,5 +1,3 @@
-
-
 <?= $this->extend('layout/template'); ?>
 
 <?= $this->section('content'); ?>
@@ -54,20 +52,18 @@
   <img src="<?= base_url('img/' .$m['foto']); ?>" width="100">
 </td>
 
-<td>
+
 <?php if(session()->get('role') == 'admin'): ?>
+<td>
+    <a href="<?= base_url('mahasiswa/edit/'.$m['id']); ?>" class="btn btn-warning btn-sm">Edit</a>
 
-<a href="<?= base_url('mahasiswa/edit/'.$m['id']); ?>" class="btn btn-warning btn-sm">
-  Edit</a>
-
-<a href="<?= base_url('mahasiswa/delete/'.$m['id']); ?>"
-onclick="return confirm('Hapus data?')"
-class="btn btn-danger btn-sm">
-Delete
-</a>
+    <a href="<?= base_url('mahasiswa/delete/'.$m['id']); ?>"
+    onclick="return confirm('Hapus data?')"
+    class="btn btn-danger btn-sm">Delete</a>
+</td>
 <?php endif; ?>
 
-</td>
+
 
 </tr>
 

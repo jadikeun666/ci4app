@@ -9,6 +9,10 @@ class Mahasiswa extends BaseController
 {
     public function index()
     {
+        if (session()->get('role') != 'admin') {
+            return redirect()->to('/profile');
+            }
+
         $model = new MahasiswaModel();
 
         $keyword = $this->request->getGet('keyword');
@@ -24,6 +28,11 @@ class Mahasiswa extends BaseController
 
     public function create()
     {
+        if (session()->get('role') != 'admin') {
+            return redirect()->to('/profile');
+            }
+
+
         $db = \Config\Database::connect();
         $jurusan = $db->table('jurusan')
                       ->get()
@@ -36,6 +45,9 @@ class Mahasiswa extends BaseController
 
     public function save()
     {
+        if (session()->get('role') != 'admin') {
+            return redirect()->to('/profile');
+            }
         if (!$this->validate([
             'nama' => 'required|min_length[3]',
             'nim' => 'required',
@@ -176,5 +188,19 @@ class Mahasiswa extends BaseController
         ]);
 
         return redirect()->to('/mahasiswa');
+    }
+
+    public function list()
+    {
+        if (!session()->get('login')) {
+            return redirect()->to('/login');
+            }
+        $model = new MahasiswaModel();
+
+        $data=[
+            'mahasiswa' => $model->getMahasiswa()->findAll()
+        ];
+
+        return view('mahasiswa_list', $data);
     }
 }

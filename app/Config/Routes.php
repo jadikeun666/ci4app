@@ -53,3 +53,13 @@ $routes->post('api/login', 'Api\Auth::login');
 
 $routes->get('/profile', 'Profile::index', ['filter' => 'auth']);
 $routes->get('/mahasiswa', 'Mahasiswa::index', ['filter' => 'role:admin']);
+$routes->get('/mahasiswa-list', 'Mahasiswa::list', ['filter' => 'auth']);
+
+$routes->group('mahasiswa', ['filter' => 'role:admin'], function($routes) {
+    $routes->get('/', 'Mahasiswa::index');
+    $routes->get('create', 'Mahasiswa::create');
+    $routes->post('save', 'Mahasiswa::save');
+    $routes->get('edit/(:num)', 'Mahasiswa::edit/$1');
+    $routes->post('update/(:num)', 'Mahasiswa::update/$1');
+    $routes->get('delete/(:num)', 'Mahasiswa::delete/$1');
+});

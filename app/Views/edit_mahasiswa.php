@@ -6,10 +6,18 @@
         Edit Mahasiswa
     </h2>
 
-    <form action="<?= base_url('mahasiswa/update/'.$mahasiswa['id']); ?>" 
-          method="post" 
-          enctype="multipart/form-data"
-          class="space-y-5">
+    <!-- 🔐 FORM ACTION BERDASARKAN ROLE -->
+    <?php if (session()->get('role') == 'admin'): ?>
+        <form action="<?= base_url('mahasiswa/update/'.$mahasiswa['id']); ?>" 
+              method="post" 
+              enctype="multipart/form-data"
+              class="space-y-5">
+    <?php else: ?>
+        <form action="<?= base_url('mahasiswa/update'); ?>" 
+              method="post" 
+              enctype="multipart/form-data"
+              class="space-y-5">
+    <?php endif; ?>
 
         <?= csrf_field(); ?>
 
@@ -24,15 +32,25 @@
                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
         </div>
 
-        <!-- NIM -->
+        <!-- 🔐 NIM (ADMIN ONLY EDIT) -->
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">
                 NIM
             </label>
-            <input type="text" 
-                   name="nim" 
-                   value="<?= esc($mahasiswa['nim']); ?>"
-                   class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+
+            <?php if (session()->get('role') == 'admin'): ?>
+                <!-- Admin bisa edit -->
+                <input type="text" 
+                       name="nim" 
+                       value="<?= esc($mahasiswa['nim']); ?>"
+                       class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <?php else: ?>
+                <!-- User hanya lihat -->
+                <input type="text" 
+                       value="<?= esc($mahasiswa['nim']); ?>" 
+                       readonly
+                       class="w-full bg-gray-100 border border-gray-300 rounded-lg px-4 py-2 cursor-not-allowed">
+            <?php endif; ?>
         </div>
 
         <!-- Jurusan -->

@@ -47,12 +47,22 @@
             </div>
 
             <!-- Button -->
-            <div class="mt-8">
-                <a href="/mahasiswa-list"
-                   class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium px-6 py-3 rounded-xl shadow-lg hover:scale-105 hover:shadow-xl transition duration-300">
-                   📋 Lihat Semua Mahasiswa
-                </a>
-            </div>
+            <!-- Button -->
+<div class="mt-8 flex flex-wrap gap-3">
+
+    <a href="/mahasiswa-list"
+       class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium px-6 py-3 rounded-xl shadow-lg hover:scale-105 hover:shadow-xl transition duration-300">
+       📋 Lihat Semua Mahasiswa
+    </a>
+
+        <?php if (!empty($mahasiswa)) : ?>
+        <a href="<?= base_url('profile/edit'); ?>"
+           class="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white font-medium px-6 py-3 rounded-xl shadow-lg hover:scale-105 hover:shadow-xl transition duration-300">
+           ✏️ Edit Profile
+        </a>
+    <?php endif; ?>
+
+</div>
         </div>
     </div>
 </div>

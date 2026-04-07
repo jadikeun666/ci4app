@@ -63,3 +63,6 @@ $routes->group('mahasiswa', ['filter' => 'role:admin'], function($routes) {
     $routes->post('update/(:num)', 'Mahasiswa::update/$1');
     $routes->get('delete/(:num)', 'Mahasiswa::delete/$1');
 });
+
+$routes->get('/profile/edit', 'Profile::edit', ['filter' => 'auth']);
+$routes->post('/profile/update', 'Profile::update', ['filter' => 'auth']);

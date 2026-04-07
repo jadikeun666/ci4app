@@ -106,59 +106,83 @@ class Mahasiswa extends BaseController
         return view('edit_mahasiswa', $data);
     }
 
-    public function update($id)
-    {
-        if (session()->get('role') != 'admin') {
-            return redirect()->to('/profile');
-            }
+    public function update($id = null)
+{
+    $model = new MahasiswaModel();
 
+    $role   = session()->get('role');
+    $userId = session()->get('user_id');
 
+    // Ambil data berdasarkan role
+    if ($role == 'admin') {
+        $dataLama = $model->find($id);
+    } else {
+        $dataLama = $model->where('user_id', $userId)->first();
+    }
 
-        if (!$this->validate([
-            'nama' => 'required|min_length[3]',
-            'nim' => 'required',
-            'jurusan_id' => 'required'
-        ])) {
-            return redirect()->to('/mahasiswa/edit/' . $id)->withInput();
+    if (!$dataLama) {
+        return redirect()->to('/profile')->with('error', 'Data tidak ditemukan');
+    }
+
+    // Validasi (beda admin vs user)
+    $rules = [
+        'nama' => 'required|min_length[3]',
+        'jurusan_id' => 'required'
+    ];
+
+    if ($role == 'admin') {
+        $rules['nim'] = 'required';
+    }
+
+    if (!$this->validate($rules)) {
+        return redirect()->back()->withInput();
+    }
+
+    // Upload foto
+    $fileFoto = $this->request->getFile('foto');
+
+    if ($fileFoto && $fileFoto->isValid() && $fileFoto->getError() != 4) {
+
+        if (!empty($dataLama['foto']) && file_exists('img/'.$dataLama['foto'])) {
+            unlink('img/'.$dataLama['foto']);
         }
 
-        $model = new MahasiswaModel();
+        $namaFoto = $fileFoto->getRandomName();
+        $fileFoto->move('img', $namaFoto);
 
-        $fileFoto = $this->request->getFile('foto');
+    } else {
+        $namaFoto = $dataLama['foto'];
+    }
 
-        if ($fileFoto->getError() == 4) {
-            $namaFoto = $this->request->getPost('fotoLama');
-        } else {
-            // hapus foto lama
-            $fotoLama = $this->request->getPost('fotoLama');
-
-            if(!empty($fotoLama) && file_exists('img/' . $fotoLama)){
-                unlink('img/' . $fotoLama);
-            }
-
-            $namaFoto = $fileFoto->getRandomName();
-            $fileFoto->move('img', $namaFoto);
-        }
-
-        $model->update($id, [
+    // Data update dibatasi
+    if ($role == 'admin') {
+        $dataUpdate = [
             'nama' => $this->request->getPost('nama'),
             'nim' => $this->request->getPost('nim'),
             'jurusan_id' => $this->request->getPost('jurusan_id'),
             'foto' => $namaFoto
-        ]);
-
-        session()->setFlashdata('pesan', 'Data berhasil diupdate');
-
-        $log = new AuditLogModel();
-
-        $log->insert([
-            'user'          => session()->get('username'),
-            'action'        => 'UPDATE',
-            'description'   => 'Update data ID: '.$id
-        ]);
-
-        return redirect()->to('/mahasiswa');
+        ];
+    } else {
+        $dataUpdate = [
+            'nama' => $this->request->getPost('nama'),
+            'jurusan_id' => $this->request->getPost('jurusan_id'),
+            'foto' => $namaFoto
+        ];
     }
+
+    $model->update($dataLama['id'], $dataUpdate);
+
+    // Audit log
+    $log = new AuditLogModel();
+    $log->insert([
+        'user' => session()->get('username'),
+        'action' => 'UPDATE',
+        'description' => 'Update data ID: '.$dataLama['id']
+    ]);
+
+    return redirect()->to($role == 'admin' ? '/mahasiswa' : '/profile')
+                     ->with('pesan', 'Data berhasil diupdate');
+                     }
 
     public function delete($id)
     {

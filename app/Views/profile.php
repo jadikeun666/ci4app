@@ -13,6 +13,13 @@
             <h3 class="text-2xl font-bold">👤 Profile Saya</h3>
         </div>
 
+        <!-- 🔔 NOTIFIKASI -->
+        <?php if (session()->getFlashdata('pesan')): ?>
+            <div class="mx-6 mt-4 bg-green-500 text-white px-4 py-3 rounded-xl shadow">
+                <?= session()->getFlashdata('pesan'); ?>
+            </div>
+        <?php endif; ?>
+
         <!-- Content -->
         <div class="p-8">
             <div class="grid md:grid-cols-3 gap-8 items-center">
@@ -61,6 +68,11 @@
            ✏️ Edit Profile
         </a>
     <?php endif; ?>
+
+    <a href="<?= base_url('/profile/change-password'); ?>"
+    class="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-pink-600 text-white font-medium px-5 py-3 rounded-xl shadow-lg hover:scale-105 hover:shadow-xl transition duration-300">
+   🔒 Ganti Password
+    </a>
 
 </div>
         </div>

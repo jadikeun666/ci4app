@@ -42,6 +42,13 @@
         <a href="<?= base_url('/register'); ?>">Belum punya akun? Register</a>
     </div>
 
+    <div class="text-center mt-2">
+    <a href="<?= base_url('/forgot-password'); ?>" 
+       class="text-sm text-blue-500 hover:underline">
+       Lupa Password?
+    </a>
+</div>
+
 </div>
 
 <?= $this->endSection(); ?>

@@ -76,4 +76,42 @@ class Profile extends BaseController
 
     return redirect()->to('/profile')->with('pesan', 'Profile berhasil diupdate');
     }
+
+    public function changePassword()
+    {
+      return view('change_password');
+    }
+
+    public function updatePassword()
+    {
+      $userModel = new \App\Models\UserModel();
+
+      $userId =  session()->get('user_id');
+
+      $user = $userModel->find($userId);
+
+      $passwordLama= $this->request->getPost('password_lama');
+      $passwordBaru= $this->request->getPost('password_baru');
+      $konfirmasi= $this->request->getPost('konfirmasi');
+      
+
+      //validasi password lama
+      if (!password_verify($passwordLama, $user['password'])){
+        return redirect()->back()->with('error','Password Lama Salah');
+      }
+      // validasi konfirmasi
+      if ($passwordBaru !== $konfirmasi) {
+        return redirect()->back()->with('error', 'Konfirmasi password tidak cocok');
+      }
+
+    // hash password baru
+      $hash = password_hash($passwordBaru, PASSWORD_DEFAULT);
+
+      $userModel->update($userId, [
+        'password' => $hash
+      ]);
+
+      return redirect()->to('/profile')->with('pesan', 'Password berhasil diganti');
+
+      }
 }

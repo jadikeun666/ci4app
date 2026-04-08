@@ -66,3 +66,13 @@ $routes->group('mahasiswa', ['filter' => 'role:admin'], function($routes) {
 
 $routes->get('/profile/edit', 'Profile::edit', ['filter' => 'auth']);
 $routes->post('/profile/update', 'Profile::update', ['filter' => 'auth']);
+
+
+$routes->get('/profile/change-password', 'Profile::changePassword', ['filter' => 'auth']);
+$routes->post('/profile/update-password', 'Profile::updatePassword', ['filter' => 'auth']);
+
+$routes->get('/forgot-password', 'Auth::forgotPassword');
+$routes->post('/send-reset-link', 'Auth::sendResetLink');
+
+$routes->get('/reset-password/(:any)', 'Auth::resetPassword/$1');
+$routes->post('/update-reset-password', 'Auth::updateResetPassword');
